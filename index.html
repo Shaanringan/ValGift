@@ -162,7 +162,7 @@ Continue ❤️
 
 <!-- COUNTDOWN -->
 <div id="countdown" class="section">
-<h1>Countdown to 6th June 2026</h1>
+<h1>Countdown to our Next Meeting & Your Birthday !!!</h1>
 <h2 id="finalTimer"></h2>
 <button class="primary" onclick="next('ending')">
 Almost There 💖
@@ -189,6 +189,9 @@ const correctPassword="01/08/2024";
 const music=document.getElementById("bgMusic");
 let questionInterval;
 
+  let confettiRunning = false;
+let confettiAnimation;
+  
 /* PASSWORD */
 function checkPass(){
 let input=document.getElementById("passInput").value;
@@ -295,6 +298,8 @@ const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
+confettiRunning = true;
+
 let pieces=[];
 for(let i=0;i<150;i++){
 pieces.push({
@@ -307,6 +312,8 @@ color:`hsl(${Math.random()*360},100%,50%)`
 }
 
 function draw(){
+if(!confettiRunning) return;
+
 ctx.clearRect(0,0,canvas.width,canvas.height);
 pieces.forEach(p=>{
 ctx.fillStyle=p.color;
@@ -314,20 +321,32 @@ ctx.fillRect(p.x,p.y,p.size,p.size);
 p.y+=p.speed;
 if(p.y>canvas.height)p.y=0;
 });
-requestAnimationFrame(draw);
+confettiAnimation = requestAnimationFrame(draw);
 }
+
 draw();
+}
+
 
 setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),3000);
 }
 
 /* RESET */
 function resetToStart(){
+
+confettiRunning = false;
+cancelAnimationFrame(confettiAnimation);
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
 music.pause();
 music.currentTime=0;
 document.getElementById("passInput").value="";
 switchSection("password");
 }
+
 
 </script>
 </body>
