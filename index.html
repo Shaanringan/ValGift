@@ -15,19 +15,19 @@ text-align:center;
 overflow:hidden;
 }
 
-/* Sections */
 .section{
 display:none;
-min-height:100vh;
+height:100vh;
 padding:40px;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-animation:fade 0.8s ease;
+position:relative;
 }
 
 .active{
 display:flex;
+animation:fade 1s ease;
 }
 
 @keyframes fade{
@@ -35,13 +35,20 @@ from{opacity:0;}
 to{opacity:1;}
 }
 
-/* Buttons */
+input{
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:10px;
+}
+
+/* Bigger Buttons */
 button{
 padding:18px 36px;
-font-size:1.15rem;
+font-size:1.1rem;
 border:none;
 border-radius:30px;
-margin:14px;
+margin:12px;
 cursor:pointer;
 transition:0.3s;
 font-weight:bold;
@@ -50,7 +57,6 @@ font-weight:bold;
 .primary{
 background:#ff4b91;
 color:white;
-box-shadow:0 0 15px rgba(255,75,145,0.6);
 }
 
 .secondary{
@@ -63,14 +69,14 @@ button:hover{
 transform:scale(1.1);
 }
 
-/* Question Rain */
+/* Continuous Falling Question Marks */
 .question{
 position:absolute;
 top:-50px;
-font-size:30px;
+font-size:28px;
 color:#ff4b91;
-opacity:0.6;
 animation:fall linear infinite;
+opacity:0.5;
 }
 
 @keyframes fall{
@@ -78,28 +84,12 @@ animation:fall linear infinite;
 100%{transform:translateY(110vh);}
 }
 
-/* Image animation */
-img.fadeIn{
-opacity:0;
-transform:translateY(30px);
-transition:all 1s ease;
-border-radius:12px;
-}
-
-img.show{
-opacity:1;
-transform:translateY(0);
-}
-
-#continueMemories{
-opacity:0;
-transform:scale(0.8);
-transition:all 0.8s ease;
-}
-
-#continueMemories.showBtn{
-opacity:1;
-transform:scale(1);
+/* Confetti */
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
 }
 </style>
 </head>
@@ -121,7 +111,7 @@ transform:scale(1);
 <!-- INTRUDER -->
 <div id="intruder" class="section" style="background:black;">
 <h1 style="color:red;">YOU ARE NOT MY AVANTI ! BACK OFF !!!!</h1>
-<img src="Intruder.jpg" style="max-width:90%; margin-top:20px;">
+<img src="Intruder.jpg" style="max-width:90%; margin-top:20px; border-radius:10px;">
 </div>
 
 <!-- INTRO -->
@@ -134,7 +124,7 @@ transform:scale(1);
 <div id="ask" class="section">
 <div id="questionContainer"></div>
 
-<img src="capy.jpg" style="max-width:250px; margin-bottom:20px;">
+<img src="capy.jpg" style="max-width:250px; border-radius:15px; margin-bottom:20px;">
 
 <h1>Will you be my Valentine? ❤️</h1>
 
@@ -146,10 +136,10 @@ transform:scale(1);
 <div id="memories" class="section">
 <h1>Our Moments ❤️</h1>
 
-<div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
-<img src="dummypic1.jpg" class="fadeIn" id="pic1" width="220">
-<img src="dummypic2.jpg" class="fadeIn" id="pic2" width="220">
-<img src="dummypic3.jpg" class="fadeIn" id="pic3" width="220">
+<div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center;">
+<img src="dummypic1.jpg" style="width:200px; border-radius:12px;">
+<img src="dummypic2.jpg" style="width:200px; border-radius:12px;">
+<img src="dummypic3.jpg" style="width:200px; border-radius:12px;">
 </div>
 
 <p style="max-width:600px; margin-top:20px;">
@@ -157,33 +147,41 @@ This is where your personal message will go.
 Edit this later and write something meaningful.
 </p>
 
-<button id="continueMemories" class="primary" onclick="next('valentineWish')">
+<button class="primary" onclick="next('valentineWish')">
 Continue 💌
 </button>
 </div>
 
-<!-- VALENTINE -->
+<!-- VALENTINE WISH -->
 <div id="valentineWish" class="section">
-<h1 style="font-size:4rem;">Happy Valentine's Day Avan ❤️</h1>
-<button class="primary" onclick="next('countdown')">Continue ❤️</button>
+<h1 style="font-size:3.5rem;">Happy Valentine's Day Avan ❤️</h1>
+<button class="primary" onclick="next('countdown')">
+Continue ❤️
+</button>
 </div>
 
 <!-- COUNTDOWN -->
 <div id="countdown" class="section">
 <h1>Countdown to 6th June 2026</h1>
 <h2 id="finalTimer"></h2>
-<button class="primary" onclick="next('ending')">Almost There 💖</button>
+<button class="primary" onclick="next('ending')">
+Almost There 💖
+</button>
 </div>
 
 <!-- END -->
 <div id="ending" class="section">
 <h1>I Love You Avan ❤️</h1>
 <p style="font-size:1.3rem;">
-No matter the distance, my heart stays with you always.
+No matter the distance, my heart is always with you.
 See you very soon, my love.
 </p>
-<button class="primary" onclick="resetToStart()">The End 💌</button>
+<button class="primary" onclick="resetToStart()">
+The End 💌
+</button>
 </div>
+
+<canvas id="confetti"></canvas>
 
 <script>
 
@@ -191,26 +189,10 @@ const correctPassword="01/08/2024";
 const music=document.getElementById("bgMusic");
 let questionInterval;
 
-/* Switch Sections */
-function switchSection(id){
-document.querySelectorAll(".section").forEach(s=>{
-s.classList.remove("active");
-});
-document.getElementById(id).classList.add("active");
-
-if(id==="ask"){startQuestionRain();}
-if(id==="memories"){startMemoriesAnimation();}
-}
-
-function next(id){
-switchSection(id);
-}
-
-/* Password Check */
+/* PASSWORD */
 function checkPass(){
-const input = document.getElementById("passInput").value;
-
-if(input === correctPassword){
+let input=document.getElementById("passInput").value;
+if(input===correctPassword){
 switchSection("intro");
 startMusicFadeIn();
 typeWriter();
@@ -219,7 +201,20 @@ switchSection("intruder");
 }
 }
 
-/* Music Fade */
+/* SECTION SWITCH */
+function switchSection(id){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+
+if(id==="ask"){startQuestionRain();}
+}
+
+/* NAV */
+function next(id){
+switchSection(id);
+}
+
+/* MUSIC FADE */
 function startMusicFadeIn(){
 music.volume=0;
 music.play();
@@ -232,7 +227,7 @@ clearInterval(fade);
 },200);
 }
 
-/* Typewriter */
+/* TYPEWRITER */
 let text="Every moment with you feels different... and better ❤️";
 let i=0;
 function typeWriter(){
@@ -243,7 +238,7 @@ setTimeout(typeWriter,50);
 }
 }
 
-/* Continuous Question Rain */
+/* CONTINUOUS QUESTION RAIN */
 function startQuestionRain(){
 const container=document.getElementById("questionContainer");
 container.innerHTML="";
@@ -254,49 +249,79 @@ let q=document.createElement("div");
 q.className="question";
 q.innerText="?";
 q.style.left=Math.random()*100+"vw";
-q.style.animationDuration=(4+Math.random()*4)+"s";
+q.style.animationDuration=(3+Math.random()*3)+"s";
 container.appendChild(q);
-},250);
+},300);
 }
 
-/* Runaway NO */
-document.getElementById("noBtn").addEventListener("mouseover",function(){
-this.style.top=Math.random()*70+"%";
-this.style.left=Math.random()*70+"%";
-});
-
+/* STOP RAIN ON YES */
 function sayYes(){
 clearInterval(questionInterval);
 document.getElementById("questionContainer").innerHTML="";
+launchConfetti();
 switchSection("memories");
 }
 
-/* Sequential Image Animation */
-function startMemoriesAnimation(){
-setTimeout(()=>document.getElementById("pic1").classList.add("show"),1000);
-setTimeout(()=>document.getElementById("pic2").classList.add("show"),3000);
-setTimeout(()=>document.getElementById("pic3").classList.add("show"),5000);
-setTimeout(()=>document.getElementById("continueMemories").classList.add("showBtn"),15000);
-}
+/* RUNAWAY NO */
+document.getElementById("noBtn").addEventListener("mouseover",()=>{
+noBtn.style.top=Math.random()*70+"%";
+noBtn.style.left=Math.random()*70+"%";
+});
 
-/* Countdown */
+/* FULL COUNTDOWN */
 const targetDate=new Date("June 6, 2026 00:00:00").getTime();
 setInterval(()=>{
 const now=new Date().getTime();
 const diff=targetDate-now;
 
-const d=Math.floor(diff/(1000*60*60*24));
-const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-const m=Math.floor((diff%(1000*60*60))/(1000*60));
-const s=Math.floor((diff%(1000*60))/1000);
+const days=Math.floor(diff/(1000*60*60*24));
+const hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+const minutes=Math.floor((diff%(1000*60*60))/(1000*60));
+const seconds=Math.floor((diff%(1000*60))/1000);
 
 if(document.getElementById("finalTimer")){
 document.getElementById("finalTimer").innerHTML=
-d+" Days "+h+" Hours "+m+" Minutes "+s+" Seconds ❤️";
+days+" Days "+
+hours+" Hours "+
+minutes+" Minutes "+
+seconds+" Seconds ❤️";
 }
 },1000);
 
-/* Reset */
+/* FIXED CONFETTI */
+function launchConfetti(){
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let pieces=[];
+for(let i=0;i<150;i++){
+pieces.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:5+Math.random()*5,
+speed:2+Math.random()*3,
+color:`hsl(${Math.random()*360},100%,50%)`
+});
+}
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+pieces.forEach(p=>{
+ctx.fillStyle=p.color;
+ctx.fillRect(p.x,p.y,p.size,p.size);
+p.y+=p.speed;
+if(p.y>canvas.height)p.y=0;
+});
+requestAnimationFrame(draw);
+}
+draw();
+
+setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),3000);
+}
+
+/* RESET */
 function resetToStart(){
 music.pause();
 music.currentTime=0;
