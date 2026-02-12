@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For Avan ❤️</title>
+<title>For Avan ❤️ V1.0</title>
 
 <style>
 body{
@@ -15,7 +15,7 @@ text-align:center;
 overflow:hidden;
 }
 
-/* Smooth Sections */
+/* Smooth page transition */
 .section{
 display:none;
 height:100vh;
@@ -25,14 +25,24 @@ align-items:center;
 flex-direction:column;
 position:relative;
 opacity:0;
-transform:translateY(20px);
-transition:opacity 0.6s ease, transform 0.6s ease;
+transform:translateY(30px);
+transition:opacity 0.8s ease, transform 0.8s ease;
 }
 
 .active{
 display:flex;
 opacity:1;
 transform:translateY(0);
+}
+
+/* Zoom animation for ALL headings */
+@keyframes zoomIn{
+0%{transform:scale(0.7); opacity:0;}
+100%{transform:scale(1); opacity:1;}
+}
+
+h1, h2{
+animation:zoomIn 1.2s ease;
 }
 
 input{
@@ -98,26 +108,16 @@ opacity:0.5;
 100%{transform:translateY(110vh);}
 }
 
-/* Zoom animation */
-@keyframes zoomIn{
-0%{transform:scale(0.6); opacity:0;}
-100%{transform:scale(1); opacity:1;}
-}
-
-.zoom{
-animation:zoomIn 1.5s ease;
-}
-
-/* Memory animation */
+/* Memory images */
 .memoryImg{
 opacity:0;
-transform:translateY(30px);
-transition:all 1s ease;
+transform:scale(0.8);
+transition:all 0.8s ease;
 }
 
 .showMemory{
 opacity:1;
-transform:translateY(0);
+transform:scale(1);
 }
 
 /* Fade overlay */
@@ -161,7 +161,7 @@ pointer-events:none;
 
 <!-- INTRUDER -->
 <div id="intruder" class="section" style="background:black;">
-<h1 style="color:red;">YOU ARE NOT MY AVANTI ! BACK OFF !!!!</h1>
+<h1>YOU ARE NOT MY AVANTI ! BACK OFF !!!!</h1>
 <img src="Intruder.jpg" style="max-width:90%; margin-top:20px; border-radius:10px;">
 </div>
 
@@ -174,11 +174,8 @@ pointer-events:none;
 <!-- ASK -->
 <div id="ask" class="section">
 <div id="questionContainer"></div>
-
 <img src="capy.jpg" style="max-width:250px; border-radius:15px; margin-bottom:20px;">
-
 <h1>Will you be my Valentine? ❤️</h1>
-
 <button class="primary pulse" onclick="sayYes()">YES 💖</button>
 <button id="noBtn" class="secondary">NO 😏</button>
 </div>
@@ -205,14 +202,10 @@ Continue 💌
 
 <!-- VALENTINE -->
 <div id="valentineWish" class="section">
-<h1 class="zoom" style="font-size:3.5rem;">
-Happy Valentine's Day Avan ❤️
-</h1>
-
+<h1>Happy Valentine's Day Avan ❤️</h1>
 <p style="font-size:0.9rem; margin-top:15px; opacity:0.8;">
 P.S. Just a smol attempt to make our Valentine’s Day feel a little special, even if we’re miles apart 💫
 </p>
-
 <button class="primary" onclick="next('countdown')">
 Continue ❤️
 </button>
@@ -220,7 +213,7 @@ Continue ❤️
 
 <!-- COUNTDOWN -->
 <div id="countdown" class="section">
-<h1 class="zoom">Countdown to our Next Meeting & Your Birthday !!!</h1>
+<h1>Countdown to our Next Meeting & Your Birthday !!!</h1>
 <h2 id="finalTimer"></h2>
 <button class="primary" onclick="next('ending')">
 Almost There 💖
@@ -229,7 +222,7 @@ Almost There 💖
 
 <!-- END -->
 <div id="ending" class="section">
-<h1 class="zoom">Forever Yours ❤️</h1>
+<h1>Forever Yours ❤️</h1>
 <p style="font-size:1.3rem;">
 No matter the distance, my heart stays with you always.
 </p>
@@ -309,12 +302,12 @@ this.style.top=Math.random()*70+"%";
 this.style.left=Math.random()*70+"%";
 });
 
-/* Massive celebration */
+/* Celebration */
 function sayYes(){
 clearInterval(questionInterval);
 document.getElementById("questionContainer").innerHTML="";
 launchCelebration();
-setTimeout(()=>{switchSection("memories");},5000);
+setTimeout(()=>{switchSection("memories");},4000);
 }
 
 function launchCelebration(){
@@ -327,12 +320,12 @@ let particles=[];
 let animation;
 
 function explosion(){
-for(let i=0;i<120;i++){
+for(let i=0;i<150;i++){
 particles.push({
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
 angle:Math.random()*2*Math.PI,
-speed:2+Math.random()*6,
+speed:2+Math.random()*7,
 radius:2+Math.random()*4,
 alpha:1,
 color:`hsl(${Math.random()*360},100%,50%)`
@@ -346,7 +339,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 particles.forEach(p=>{
 p.x+=Math.cos(p.angle)*p.speed;
 p.y+=Math.sin(p.angle)*p.speed;
-p.alpha-=0.015;
+p.alpha-=0.02;
 ctx.globalAlpha=p.alpha;
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.radius,0,2*Math.PI);
@@ -358,21 +351,21 @@ particles=particles.filter(p=>p.alpha>0);
 animation=requestAnimationFrame(animate);
 }
 
-setInterval(explosion,500);
+setInterval(explosion,400);
 animate();
 
 setTimeout(()=>{
 cancelAnimationFrame(animation);
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.globalAlpha=1;
-},5000);
+},4000);
 }
 
-/* Images every 2.5 sec */
+/* Faster image reveal */
 function showMemories(){
-setTimeout(()=>document.getElementById("m1").classList.add("showMemory"),2500);
-setTimeout(()=>document.getElementById("m2").classList.add("showMemory"),5000);
-setTimeout(()=>document.getElementById("m3").classList.add("showMemory"),7500);
+setTimeout(()=>document.getElementById("m1").classList.add("showMemory"),1000);
+setTimeout(()=>document.getElementById("m2").classList.add("showMemory"),2000);
+setTimeout(()=>document.getElementById("m3").classList.add("showMemory"),3000);
 }
 
 /* Countdown */
@@ -393,7 +386,7 @@ days+" Days "+hours+" Hours "+minutes+" Minutes "+seconds+" Seconds ❤️";
 }
 },1000);
 
-/* Final cinematic fade */
+/* Final fade out */
 function finalFade(){
 const overlay=document.getElementById("fadeOverlay");
 overlay.style.opacity=1;
