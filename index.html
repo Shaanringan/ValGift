@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1e1e2f, #2b1055);
+        color: white;
+        text-align: center;
+        overflow-x: hidden;
+    }
+
+    .section {
+        display: none;
+        padding: 80px 20px;
+        min-height: 100vh;
+    }
+
+    .active {
+        display: block;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    p {
+        max-width: 600px;
+        margin: auto;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    button {
+        margin-top: 30px;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .primary {
+        background: #ff4b91;
+        color: white;
+    }
+
+    .secondary {
+        background: white;
+        color: #2b1055;
+        margin-left: 10px;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+    .hidden-message {
+        margin-top: 30px;
+        font-size: 1.2rem;
+        color: #ffd1dc;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<div id="intro" class="section active">
+    <h1>I made something for you ❤️</h1>
+    <p>Open this when you’re ready.</p>
+    <button class="primary" onclick="nextSection('memory')">Open</button>
+</div>
+
+<div id="memory" class="section">
+    <h1>Do You Remember This?</h1>
+    <p>
+        The first time we laughed uncontrollably together.  
+        The way you looked at me that day.  
+        That moment when I knew this was different.
+    </p>
+    <button class="primary" onclick="nextSection('ask')">Continue</button>
+</div>
+
+<div id="ask" class="section">
+    <h1>So here’s my question...</h1>
+    <p>
+        Even from another country,  
+        will you let me spoil you this Valentine’s?
+    </p>
+
+    <button class="primary" onclick="sayYes()">Yes 💖</button>
+    <button class="secondary" onclick="tease()">Only if you promise something 😌</button>
+
+    <div id="finalMessage" class="hidden-message">
+        Deal. Video dinner date. Dress code mandatory.  
+        And this is just the beginning ❤️
+    </div>
+</div>
+
+<script>
+function nextSection(id) {
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function sayYes() {
+    document.getElementById("finalMessage").style.display = "block";
+}
+
+function tease() {
+    document.getElementById("finalMessage").style.display = "block";
+}
+</script>
+
+</body>
+</html>
