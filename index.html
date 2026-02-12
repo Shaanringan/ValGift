@@ -1,126 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For You ❤️</title>
+<title>For Avanti ❤️</title>
+
 <style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #1e1e2f, #2b1055);
-        color: white;
-        text-align: center;
-        overflow-x: hidden;
-    }
+body{
+margin:0;
+font-family:Segoe UI, sans-serif;
+background:#0f0c29;
+background:linear-gradient(to right,#0f0c29,#302b63,#24243e);
+color:white;
+text-align:center;
+overflow:hidden;
+}
 
-    .section {
-        display: none;
-        padding: 80px 20px;
-        min-height: 100vh;
-    }
+.section{
+display:none;
+height:100vh;
+padding:40px;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+}
 
-    .active {
-        display: block;
-        animation: fadeIn 1s ease-in-out;
-    }
+.active{
+display:flex;
+animation:fade 1s ease;
+}
 
-    h1 {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
-    }
+input{
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:10px;
+}
 
-    p {
-        max-width: 600px;
-        margin: auto;
-        font-size: 1.1rem;
-        line-height: 1.6;
-    }
+button{
+padding:12px 22px;
+border:none;
+border-radius:25px;
+margin:10px;
+cursor:pointer;
+transition:0.3s;
+}
 
-    button {
-        margin-top: 30px;
-        padding: 12px 25px;
-        border: none;
-        border-radius: 25px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: 0.3s;
-    }
+.primary{
+background:#ff4b91;
+color:white;
+}
 
-    .primary {
-        background: #ff4b91;
-        color: white;
-    }
+.secondary{
+background:white;
+color:black;
+}
 
-    .secondary {
-        background: white;
-        color: #2b1055;
-        margin-left: 10px;
-    }
+button:hover{
+transform:scale(1.1);
+}
 
-    button:hover {
-        transform: scale(1.05);
-    }
+#noBtn{
+position:absolute;
+}
 
-    @keyframes fadeIn {
-        from {opacity: 0;}
-        to {opacity: 1;}
-    }
+@keyframes fade{
+from{opacity:0;}
+to{opacity:1;}
+}
 
-    .hidden-message {
-        margin-top: 30px;
-        font-size: 1.2rem;
-        color: #ffd1dc;
-        display: none;
-    }
+.heart{
+position:absolute;
+width:15px;
+height:15px;
+background:red;
+transform:rotate(45deg);
+animation:float 8s infinite linear;
+opacity:0.6;
+}
+
+.heart:before,.heart:after{
+content:'';
+position:absolute;
+width:15px;
+height:15px;
+background:red;
+border-radius:50%;
+}
+
+.heart:before{top:-7px;left:0;}
+.heart:after{left:-7px;top:0;}
+
+@keyframes float{
+from{transform:translateY(100vh) rotate(45deg);}
+to{transform:translateY(-10vh) rotate(45deg);}
+}
+
+#giftBox{
+width:120px;
+height:120px;
+background:#ff4b91;
+margin:20px auto;
+cursor:pointer;
+position:relative;
+}
+
+#giftBox:before{
+content:'🎁';
+font-size:70px;
+position:absolute;
+top:15px;
+left:25px;
+}
+
+#giftMessage{
+display:none;
+margin-top:20px;
+font-size:1.3rem;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
+}
 </style>
 </head>
+
 <body>
 
-<div id="intro" class="section active">
-    <h1>I made something for you ❤️</h1>
-    <p>Open this when you’re ready.</p>
-    <button class="primary" onclick="nextSection('memory')">Open</button>
+<audio id="bgMusic" loop>
+<source src="music.mp3" type="audio/mp3">
+</audio>
+
+<!-- PASSWORD -->
+<div id="password" class="section active">
+<h2>Hint: When is our Avantiversary?</h2>
+<input type="password" id="passInput" placeholder="Enter date">
+<br>
+<button class="primary" onclick="checkPass()">Enter</button>
+<p id="error" style="color:red;"></p>
 </div>
 
-<div id="memory" class="section">
-    <h1>Do You Remember This?</h1>
-    <p>
-        The first time we laughed uncontrollably together.  
-        The way you looked at me that day.  
-        That moment when I knew this was different.
-    </p>
-    <button class="primary" onclick="nextSection('ask')">Continue</button>
+<!-- INTRO -->
+<div id="intro" class="section">
+<h1 id="typeText"></h1>
+<button class="primary" onclick="next('countdown')">Continue</button>
 </div>
 
+<!-- COUNTDOWN -->
+<div id="countdown" class="section">
+<h1>Countdown to Avanti's Birthday 🎂</h1>
+<h2 id="timer"></h2>
+<button class="primary" onclick="next('ask')">Continue</button>
+</div>
+
+<!-- ASK -->
 <div id="ask" class="section">
-    <h1>So here’s my question...</h1>
-    <p>
-        Even from another country,  
-        will you let me spoil you this Valentine’s?
-    </p>
-
-    <button class="primary" onclick="sayYes()">Yes 💖</button>
-    <button class="secondary" onclick="tease()">Only if you promise something 😌</button>
-
-    <div id="finalMessage" class="hidden-message">
-        Deal. Video dinner date. Dress code mandatory.  
-        And this is just the beginning ❤️
-    </div>
+<h1>Will you let me spoil you this Valentine’s? ❤️</h1>
+<button class="primary" onclick="sayYes()">YES 💖</button>
+<button id="noBtn" class="secondary">NO 😏</button>
 </div>
+
+<!-- GIFT -->
+<div id="gift" class="section">
+<h1>One More Thing...</h1>
+<div id="giftBox" onclick="openGift()"></div>
+<div id="giftMessage">
+Your real gift is waiting for you on 6th June 2026 ❤️
+</div>
+</div>
+
+<canvas id="confetti"></canvas>
 
 <script>
-function nextSection(id) {
-    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+const correctPassword="01/08/2024";
+
+function checkPass(){
+let input=document.getElementById("passInput").value;
+if(input===correctPassword){
+document.getElementById("password").classList.remove("active");
+document.getElementById("intro").classList.add("active");
+document.getElementById("bgMusic").play();
+typeWriter();
+createHearts();
+}else{
+document.getElementById("error").innerText="Wrong date.";
+}
 }
 
-function sayYes() {
-    document.getElementById("finalMessage").style.display = "block";
+function next(id){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 }
 
-function tease() {
-    document.getElementById("finalMessage").style.display = "block";
+let text="Every moment with you feels different... and better ❤️";
+let i=0;
+function typeWriter(){
+if(i<text.length){
+document.getElementById("typeText").innerHTML+=text.charAt(i);
+i++;
+setTimeout(typeWriter,50);
+}
+}
+
+function createHearts(){
+for(let i=0;i<20;i++){
+let heart=document.createElement("div");
+heart.className="heart";
+heart.style.left=Math.random()*100+"vw";
+heart.style.animationDuration=(5+Math.random()*5)+"s";
+document.body.appendChild(heart);
+}
+}
+
+const targetDate=new Date("June 6, 2026 00:00:00").getTime();
+setInterval(function(){
+const now=new Date().getTime();
+const diff=targetDate-now;
+const days=Math.floor(diff/(1000*60*60*24));
+document.getElementById("timer").innerHTML=days+" Days Left ❤️";
+},1000);
+
+const noBtn=document.getElementById("noBtn");
+noBtn.addEventListener("mouseover",()=>{
+noBtn.style.top=Math.random()*80+"%";
+noBtn.style.left=Math.random()*80+"%";
+});
+
+function sayYes(){
+launchConfetti();
+next("gift");
+}
+
+function openGift(){
+document.getElementById("giftMessage").style.display="block";
+}
+
+function launchConfetti(){
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+for(let i=0;i<200;i++){
+ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+ctx.fillRect(Math.random()*canvas.width,Math.random()*canvas.height,5,5);
+}
+setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),2000);
 }
 </script>
 
