@@ -42,7 +42,6 @@ border:none;
 margin-top:10px;
 }
 
-/* Bigger Buttons */
 button{
 padding:18px 36px;
 font-size:1.1rem;
@@ -69,7 +68,7 @@ button:hover{
 transform:scale(1.1);
 }
 
-/* Continuous Falling Question Marks */
+/* Question Rain */
 .question{
 position:absolute;
 top:-50px;
@@ -84,7 +83,6 @@ opacity:0.5;
 100%{transform:translateY(110vh);}
 }
 
-/* Confetti */
 canvas{
 position:fixed;
 top:0;
@@ -189,9 +187,9 @@ const correctPassword="01/08/2024";
 const music=document.getElementById("bgMusic");
 let questionInterval;
 
-  let confettiRunning = false;
+let confettiRunning=false;
 let confettiAnimation;
-  
+
 /* PASSWORD */
 function checkPass(){
 let input=document.getElementById("passInput").value;
@@ -204,7 +202,7 @@ switchSection("intruder");
 }
 }
 
-/* SECTION SWITCH */
+/* SWITCH SECTIONS */
 function switchSection(id){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
@@ -212,12 +210,12 @@ document.getElementById(id).classList.add("active");
 if(id==="ask"){startQuestionRain();}
 }
 
-/* NAV */
+/* NAVIGATION */
 function next(id){
 switchSection(id);
 }
 
-/* MUSIC FADE */
+/* MUSIC */
 function startMusicFadeIn(){
 music.volume=0;
 music.play();
@@ -241,7 +239,7 @@ setTimeout(typeWriter,50);
 }
 }
 
-/* CONTINUOUS QUESTION RAIN */
+/* QUESTION RAIN */
 function startQuestionRain(){
 const container=document.getElementById("questionContainer");
 container.innerHTML="";
@@ -257,7 +255,12 @@ container.appendChild(q);
 },300);
 }
 
-/* STOP RAIN ON YES */
+document.getElementById("noBtn").addEventListener("mouseover",function(){
+this.style.top=Math.random()*70+"%";
+this.style.left=Math.random()*70+"%";
+});
+
+/* YES */
 function sayYes(){
 clearInterval(questionInterval);
 document.getElementById("questionContainer").innerHTML="";
@@ -265,14 +268,9 @@ launchConfetti();
 switchSection("memories");
 }
 
-/* RUNAWAY NO */
-document.getElementById("noBtn").addEventListener("mouseover",()=>{
-noBtn.style.top=Math.random()*70+"%";
-noBtn.style.left=Math.random()*70+"%";
-});
-
-/* FULL COUNTDOWN */
+/* COUNTDOWN */
 const targetDate=new Date("June 6, 2026 00:00:00").getTime();
+
 setInterval(()=>{
 const now=new Date().getTime();
 const diff=targetDate-now;
@@ -284,21 +282,18 @@ const seconds=Math.floor((diff%(1000*60))/1000);
 
 if(document.getElementById("finalTimer")){
 document.getElementById("finalTimer").innerHTML=
-days+" Days "+
-hours+" Hours "+
-minutes+" Minutes "+
-seconds+" Seconds ❤️";
+days+" Days "+hours+" Hours "+minutes+" Minutes "+seconds+" Seconds ❤️";
 }
 },1000);
 
-/* FIXED CONFETTI */
+/* CONFETTI */
 function launchConfetti(){
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
-confettiRunning = true;
+confettiRunning=true;
 
 let pieces=[];
 for(let i=0;i<150;i++){
@@ -321,20 +316,15 @@ ctx.fillRect(p.x,p.y,p.size,p.size);
 p.y+=p.speed;
 if(p.y>canvas.height)p.y=0;
 });
-confettiAnimation = requestAnimationFrame(draw);
+confettiAnimation=requestAnimationFrame(draw);
 }
 
 draw();
 }
 
-
-setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),3000);
-}
-
 /* RESET */
 function resetToStart(){
-
-confettiRunning = false;
+confettiRunning=false;
 cancelAnimationFrame(confettiAnimation);
 
 const canvas=document.getElementById("confetti");
@@ -347,7 +337,7 @@ document.getElementById("passInput").value="";
 switchSection("password");
 }
 
-
 </script>
+
 </body>
 </html>
