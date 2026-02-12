@@ -15,25 +15,25 @@ text-align:center;
 overflow:hidden;
 }
 
+/* Smooth Slide Transition */
 .section{
-display:none;
-min-height:100vh;
+position:absolute;
+top:0;
+left:100%;
+width:100%;
+height:100vh;
 padding:40px;
 display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-animation:fade 0.8s ease;
+transition:all 0.8s ease;
 }
 
-.active{ display:flex; }
+.section.active{ left:0; }
+.section.exit{ left:-100%; }
 
-@keyframes fade{
-from{opacity:0;}
-to{opacity:1;}
-}
-
-/* Buttons */
+/* Bigger Buttons */
 button{
 padding:18px 36px;
 font-size:1.15rem;
@@ -57,7 +57,32 @@ color:black;
 position:absolute;
 }
 
-button:hover{ transform:scale(1.1); }
+button:hover{ transform:scale(1.15); }
+
+/* Glow Pulse */
+@keyframes glowPulse{
+0%{box-shadow:0 0 20px #ff4b91;}
+50%{box-shadow:0 0 60px #ff4b91;}
+100%{box-shadow:0 0 20px #ff4b91;}
+}
+
+.glow{ animation:glowPulse 3s infinite; }
+
+/* Particles */
+.particle{
+position:absolute;
+width:4px;
+height:4px;
+background:white;
+border-radius:50%;
+opacity:0.4;
+animation:floatUp linear infinite;
+}
+
+@keyframes floatUp{
+from{transform:translateY(100vh);}
+to{transform:translateY(-10vh);}
+}
 
 /* Question Rain */
 .question{
@@ -74,14 +99,18 @@ animation:fall linear infinite;
 100%{transform:translateY(110vh);}
 }
 
-/* Images */
+/* Image Effects */
+img.zoom{
+transition:transform 0.5s ease;
+border-radius:12px;
+}
+img.zoom:hover{ transform:scale(1.15); }
+
 img.fadeIn{
 opacity:0;
 transform:translateY(30px);
 transition:all 1s ease;
-border-radius:12px;
 }
-
 img.show{
 opacity:1;
 transform:translateY(0);
@@ -92,10 +121,16 @@ opacity:0;
 transform:scale(0.8);
 transition:all 0.8s ease;
 }
-
 #continueMemories.showBtn{
 opacity:1;
 transform:scale(1);
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
 }
 </style>
 </head>
@@ -107,7 +142,7 @@ transform:scale(1);
 </audio>
 
 <!-- PASSWORD -->
-<div id="password" class="section active">
+<div id="password" class="section active glow">
 <h2>Hint: When is our Avantiversary?</h2>
 <input type="password" id="passInput" placeholder="DD/MM/YYYY (include '/')">
 <br>
@@ -121,16 +156,16 @@ transform:scale(1);
 </div>
 
 <!-- INTRO -->
-<div id="intro" class="section">
+<div id="intro" class="section glow">
 <h1 id="typeText"></h1>
 <button class="primary" onclick="next('ask')">Continue</button>
 </div>
 
 <!-- ASK -->
-<div id="ask" class="section">
+<div id="ask" class="section glow">
 <div id="questionContainer"></div>
 
-<img src="capy.jpg" style="max-width:250px; margin-bottom:20px;">
+<img src="capy.jpg" style="max-width:250px; margin-bottom:20px;" class="zoom">
 
 <h1>Will you be my Valentine? ❤️</h1>
 
@@ -139,13 +174,13 @@ transform:scale(1);
 </div>
 
 <!-- MEMORIES -->
-<div id="memories" class="section">
+<div id="memories" class="section glow">
 <h1>Our Moments ❤️</h1>
 
 <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
-<img src="dummypic1.jpg" class="fadeIn" id="pic1" width="220">
-<img src="dummypic2.jpg" class="fadeIn" id="pic2" width="220">
-<img src="dummypic3.jpg" class="fadeIn" id="pic3" width="220">
+<img src="dummypic1.jpg" class="fadeIn zoom" id="pic1" width="220">
+<img src="dummypic2.jpg" class="fadeIn zoom" id="pic2" width="220">
+<img src="dummypic3.jpg" class="fadeIn zoom" id="pic3" width="220">
 </div>
 
 <p style="max-width:600px; margin-top:20px;">
@@ -159,20 +194,20 @@ Continue 💌
 </div>
 
 <!-- VALENTINE -->
-<div id="valentineWish" class="section">
+<div id="valentineWish" class="section glow">
 <h1 style="font-size:4rem;">Happy Valentine's Day Avan ❤️</h1>
 <button class="primary" onclick="next('countdown')">Continue ❤️</button>
 </div>
 
 <!-- COUNTDOWN -->
-<div id="countdown" class="section">
+<div id="countdown" class="section glow">
 <h1>Countdown to 6th June 2026</h1>
 <h2 id="finalTimer"></h2>
 <button class="primary" onclick="next('ending')">Almost There 💖</button>
 </div>
 
 <!-- END -->
-<div id="ending" class="section">
+<div id="ending" class="section glow">
 <h1>I Love You Avan ❤️</h1>
 <p style="font-size:1.3rem;">
 No matter the distance, my heart stays with you always.
@@ -181,14 +216,22 @@ See you very soon, my love.
 <button class="primary" onclick="resetToStart()">The End 💌</button>
 </div>
 
+<canvas id="confetti"></canvas>
+
 <script>
 
 const correctPassword="01/08/2024";
 const music=document.getElementById("bgMusic");
 let questionInterval;
 
+/* Slide */
 function switchSection(id){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+let current=document.querySelector(".section.active");
+if(current){
+current.classList.remove("active");
+current.classList.add("exit");
+setTimeout(()=>{current.classList.remove("exit");},800);
+}
 document.getElementById(id).classList.add("active");
 
 if(id==="ask"){startQuestionRain();}
@@ -250,6 +293,7 @@ this.style.left=Math.random()*70+"%";
 function sayYes(){
 clearInterval(questionInterval);
 questionContainer.innerHTML="";
+launchConfetti();
 switchSection("memories");
 }
 
@@ -277,11 +321,35 @@ finalTimer.innerHTML=`${d} Days ${h} Hours ${m} Minutes ${s} Seconds ❤️`;
 }
 },1000);
 
+/* Confetti */
+function launchConfetti(){
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+for(let i=0;i<150;i++){
+ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+ctx.fillRect(Math.random()*canvas.width,
+Math.random()*canvas.height,5,5);
+}
+setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),3000);
+}
+
+/* Reset */
 function resetToStart(){
 music.pause();
 music.currentTime=0;
 passInput.value="";
 switchSection("password");
+}
+
+/* Particles */
+for(let i=0;i<50;i++){
+let p=document.createElement("div");
+p.className="particle";
+p.style.left=Math.random()*100+"vw";
+p.style.animationDuration=(5+Math.random()*5)+"s";
+document.body.appendChild(p);
 }
 
 </script>
