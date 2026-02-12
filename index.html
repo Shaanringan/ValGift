@@ -30,21 +30,16 @@ flex-direction:column;
 transition:all 0.8s ease;
 }
 
-.section.active{
-left:0;
-}
-
-.section.exit{
-left:-100%;
-}
+.section.active{ left:0; }
+.section.exit{ left:-100%; }
 
 /* Bigger Buttons */
 button{
-padding:16px 32px;
-font-size:1.1rem;
+padding:18px 36px;
+font-size:1.15rem;
 border:none;
 border-radius:30px;
-margin:12px;
+margin:14px;
 cursor:pointer;
 transition:0.3s;
 font-weight:bold;
@@ -53,7 +48,7 @@ font-weight:bold;
 .primary{
 background:#ff4b91;
 color:white;
-box-shadow:0 0 15px rgba(255,75,145,0.6);
+box-shadow:0 0 20px rgba(255,75,145,0.6);
 }
 
 .secondary{
@@ -62,29 +57,25 @@ color:black;
 position:absolute;
 }
 
-button:hover{
-transform:scale(1.15);
-}
+button:hover{ transform:scale(1.15); }
 
-/* Glow Background Pulse */
+/* Glow Pulse */
 @keyframes glowPulse{
 0%{box-shadow:0 0 20px #ff4b91;}
 50%{box-shadow:0 0 60px #ff4b91;}
 100%{box-shadow:0 0 20px #ff4b91;}
 }
 
-.glow{
-animation:glowPulse 3s infinite;
-}
+.glow{ animation:glowPulse 3s infinite; }
 
-/* Subtle Floating Particles */
+/* Particles */
 .particle{
 position:absolute;
 width:4px;
 height:4px;
 background:white;
 border-radius:50%;
-opacity:0.5;
+opacity:0.4;
 animation:floatUp linear infinite;
 }
 
@@ -93,37 +84,33 @@ from{transform:translateY(100vh);}
 to{transform:translateY(-10vh);}
 }
 
-/* Question Marks */
+/* Question Rain */
 .question{
 position:absolute;
 top:-50px;
-font-size:28px;
+font-size:30px;
 color:#ff4b91;
-animation:fall linear forwards;
-opacity:0.5;
+opacity:0.6;
+animation:fall linear infinite;
 }
 
 @keyframes fall{
-to{transform:translateY(110vh);}
+0%{transform:translateY(-10vh);}
+100%{transform:translateY(110vh);}
 }
 
-/* Image Hover Zoom */
+/* Image Effects */
 img.zoom{
 transition:transform 0.5s ease;
 border-radius:12px;
 }
+img.zoom:hover{ transform:scale(1.15); }
 
-img.zoom:hover{
-transform:scale(1.15);
-}
-
-/* Fade-in images */
 img.fadeIn{
 opacity:0;
 transform:translateY(30px);
 transition:all 1s ease;
 }
-
 img.show{
 opacity:1;
 transform:translateY(0);
@@ -134,7 +121,6 @@ opacity:0;
 transform:scale(0.8);
 transition:all 0.8s ease;
 }
-
 #continueMemories.showBtn{
 opacity:1;
 transform:scale(1);
@@ -238,7 +224,7 @@ const correctPassword="01/08/2024";
 const music=document.getElementById("bgMusic");
 let questionInterval;
 
-/* Slide Navigation */
+/* Slide */
 function switchSection(id){
 let current=document.querySelector(".section.active");
 if(current){
@@ -255,8 +241,7 @@ if(id==="memories"){startMemoriesAnimation();}
 function next(id){switchSection(id);}
 
 function checkPass(){
-let input=document.getElementById("passInput").value;
-if(input===correctPassword){
+if(passInput.value===correctPassword){
 switchSection("intro");
 startMusicFadeIn();
 typeWriter();
@@ -265,7 +250,6 @@ switchSection("intruder");
 }
 }
 
-/* Music Fade */
 function startMusicFadeIn(){
 music.volume=0;
 music.play();
@@ -275,12 +259,11 @@ else{clearInterval(fade);}
 },200);
 }
 
-/* Typewriter */
 let text="Every moment with you feels different... and better ❤️";
 let i=0;
 function typeWriter(){
 if(i<text.length){
-document.getElementById("typeText").innerHTML+=text.charAt(i);
+typeText.innerHTML+=text.charAt(i);
 i++;
 setTimeout(typeWriter,50);
 }
@@ -297,29 +280,29 @@ let q=document.createElement("div");
 q.className="question";
 q.innerText="?";
 q.style.left=Math.random()*100+"vw";
-q.style.animationDuration=(3+Math.random()*3)+"s";
+q.style.animationDuration=(4+Math.random()*4)+"s";
 container.appendChild(q);
-setTimeout(()=>{q.remove();},5000);
-},300);
+},250);
 }
 
-document.getElementById("noBtn").addEventListener("mouseover",function(){
+noBtn.addEventListener("mouseover",function(){
 this.style.top=Math.random()*70+"%";
 this.style.left=Math.random()*70+"%";
 });
 
 function sayYes(){
 clearInterval(questionInterval);
+questionContainer.innerHTML="";
 launchConfetti();
 switchSection("memories");
 }
 
-/* Sequential Images */
+/* Image Animation */
 function startMemoriesAnimation(){
-setTimeout(()=>{pic1.classList.add("show");},1000);
-setTimeout(()=>{pic2.classList.add("show");},3000);
-setTimeout(()=>{pic3.classList.add("show");},5000);
-setTimeout(()=>{continueMemories.classList.add("showBtn");},15000);
+setTimeout(()=>pic1.classList.add("show"),1000);
+setTimeout(()=>pic2.classList.add("show"),3000);
+setTimeout(()=>pic3.classList.add("show"),5000);
+setTimeout(()=>continueMemories.classList.add("showBtn"),15000);
 }
 
 /* Countdown */
@@ -360,7 +343,7 @@ passInput.value="";
 switchSection("password");
 }
 
-/* Background Particles */
+/* Particles */
 for(let i=0;i<50;i++){
 let p=document.createElement("div");
 p.className="particle";
@@ -370,6 +353,5 @@ document.body.appendChild(p);
 }
 
 </script>
-
 </body>
 </html>
