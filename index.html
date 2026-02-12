@@ -200,7 +200,8 @@ if(id==="memories"){startMemoriesAnimation();}
 function next(id){switchSection(id);}
 
 function checkPass(){
-if(passInput.value===correctPassword){
+const input = document.getElementById("passInput").value;
+if(input === correctPassword){
 switchSection("intro");
 startMusicFadeIn();
 typeWriter();
@@ -208,6 +209,7 @@ typeWriter();
 switchSection("intruder");
 }
 }
+
 
 /* Music Fade */
 function startMusicFadeIn(){
@@ -284,7 +286,7 @@ finalTimer.innerHTML=`${d} Days ${h} Hours ${m} Minutes ${s} Seconds ❤️`;
 function resetToStart(){
 music.pause();
 music.currentTime=0;
-passInput.value="";
+document.getElementById("passInput").value="";
 switchSection("password");
 }
 
