@@ -15,38 +15,36 @@ text-align:center;
 overflow:hidden;
 }
 
+/* Smooth Slide Transition */
 .section{
-display:none;
+position:absolute;
+top:0;
+left:100%;
+width:100%;
 height:100vh;
 padding:40px;
+display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-position:relative;
+transition:all 0.8s ease;
 }
 
-.active{
-display:flex;
-animation:fade 1s ease;
+.section.active{
+left:0;
 }
 
-@keyframes fade{
-from{opacity:0;}
-to{opacity:1;}
+.section.exit{
+left:-100%;
 }
 
-input{
-padding:10px;
-border-radius:8px;
-border:none;
-margin-top:10px;
-}
-
+/* Bigger Buttons */
 button{
-padding:12px 22px;
+padding:16px 32px;
+font-size:1.1rem;
 border:none;
-border-radius:25px;
-margin:10px;
+border-radius:30px;
+margin:12px;
 cursor:pointer;
 transition:0.3s;
 font-weight:bold;
@@ -55,6 +53,7 @@ font-weight:bold;
 .primary{
 background:#ff4b91;
 color:white;
+box-shadow:0 0 15px rgba(255,75,145,0.6);
 }
 
 .secondary{
@@ -64,10 +63,37 @@ position:absolute;
 }
 
 button:hover{
-transform:scale(1.1);
+transform:scale(1.15);
 }
 
-/* Falling Question Marks */
+/* Glow Background Pulse */
+@keyframes glowPulse{
+0%{box-shadow:0 0 20px #ff4b91;}
+50%{box-shadow:0 0 60px #ff4b91;}
+100%{box-shadow:0 0 20px #ff4b91;}
+}
+
+.glow{
+animation:glowPulse 3s infinite;
+}
+
+/* Subtle Floating Particles */
+.particle{
+position:absolute;
+width:4px;
+height:4px;
+background:white;
+border-radius:50%;
+opacity:0.5;
+animation:floatUp linear infinite;
+}
+
+@keyframes floatUp{
+from{transform:translateY(100vh);}
+to{transform:translateY(-10vh);}
+}
+
+/* Question Marks */
 .question{
 position:absolute;
 top:-50px;
@@ -81,7 +107,39 @@ opacity:0.5;
 to{transform:translateY(110vh);}
 }
 
-/* Confetti */
+/* Image Hover Zoom */
+img.zoom{
+transition:transform 0.5s ease;
+border-radius:12px;
+}
+
+img.zoom:hover{
+transform:scale(1.15);
+}
+
+/* Fade-in images */
+img.fadeIn{
+opacity:0;
+transform:translateY(30px);
+transition:all 1s ease;
+}
+
+img.show{
+opacity:1;
+transform:translateY(0);
+}
+
+#continueMemories{
+opacity:0;
+transform:scale(0.8);
+transition:all 0.8s ease;
+}
+
+#continueMemories.showBtn{
+opacity:1;
+transform:scale(1);
+}
+
 canvas{
 position:fixed;
 top:0;
@@ -93,36 +151,35 @@ pointer-events:none;
 
 <body>
 
-<!-- 🔊 MUSIC -->
 <audio id="bgMusic" loop preload="auto">
 <source src="Music.mp3" type="audio/mp3">
 </audio>
 
 <!-- PASSWORD -->
-<div id="password" class="section active"> 
+<div id="password" class="section active glow">
 <h2>Hint: When is our Avantiversary?</h2>
 <input type="password" id="passInput" placeholder="DD/MM/YYYY (include '/')">
 <br>
 <button class="primary" onclick="checkPass()">Enter</button>
 </div>
 
-<!-- 🚨 INTRUDER -->
+<!-- INTRUDER -->
 <div id="intruder" class="section" style="background:black;">
 <h1 style="color:red;">YOU ARE NOT MY AVANTI ! BACK OFF !!!!</h1>
-<img src="Intruder.jpg" style="max-width:90%; margin-top:20px; border-radius:10px;">
+<img src="Intruder.jpg" style="max-width:90%; margin-top:20px;">
 </div>
 
 <!-- INTRO -->
-<div id="intro" class="section">
+<div id="intro" class="section glow">
 <h1 id="typeText"></h1>
 <button class="primary" onclick="next('ask')">Continue</button>
 </div>
 
 <!-- ASK -->
-<div id="ask" class="section">
+<div id="ask" class="section glow">
 <div id="questionContainer"></div>
 
-<img src="capy.jpg" style="max-width:250px; border-radius:15px; margin-bottom:20px;">
+<img src="capy.jpg" style="max-width:250px; margin-bottom:20px;" class="zoom">
 
 <h1>Will you be my Valentine? ❤️</h1>
 
@@ -131,13 +188,13 @@ pointer-events:none;
 </div>
 
 <!-- MEMORIES -->
-<div id="memories" class="section">
+<div id="memories" class="section glow">
 <h1>Our Moments ❤️</h1>
 
-<div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center;">
-<img src="dummypic1.jpg" style="width:200px; border-radius:12px;">
-<img src="dummypic2.jpg" style="width:200px; border-radius:12px;">
-<img src="dummypic3.jpg" style="width:200px; border-radius:12px;">
+<div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+<img src="dummypic1.jpg" class="fadeIn zoom" id="pic1" width="220">
+<img src="dummypic2.jpg" class="fadeIn zoom" id="pic2" width="220">
+<img src="dummypic3.jpg" class="fadeIn zoom" id="pic3" width="220">
 </div>
 
 <p style="max-width:600px; margin-top:20px;">
@@ -145,32 +202,32 @@ This is where your personal message will go.
 Edit this later and write something meaningful.
 </p>
 
-<button class="primary" onclick="next('valentineWish')">
+<button id="continueMemories" class="primary" onclick="next('valentineWish')">
 Continue 💌
 </button>
 </div>
 
-<!-- VALENTINE WISH -->
-<div id="valentineWish" class="section">
-<h1 style="font-size:3rem;">Happy Valentine's Day Avan <3</h1>
-<button class="primary" onclick="next('countdown')">
-Continue ❤️
-</button>
+<!-- VALENTINE -->
+<div id="valentineWish" class="section glow">
+<h1 style="font-size:4rem;">Happy Valentine's Day Avan ❤️</h1>
+<button class="primary" onclick="next('countdown')">Continue ❤️</button>
 </div>
 
 <!-- COUNTDOWN -->
-<div id="countdown" class="section">
+<div id="countdown" class="section glow">
 <h1>Countdown to 6th June 2026</h1>
 <h2 id="finalTimer"></h2>
-<button class="primary" onclick="next('ending')">
-Almost There 💖
-</button>
+<button class="primary" onclick="next('ending')">Almost There 💖</button>
 </div>
 
 <!-- END -->
-<div id="ending" class="section">
+<div id="ending" class="section glow">
 <h1>I Love You Avan ❤️</h1>
-<p style="font-size:1.3rem;">See you soon.</p>
+<p style="font-size:1.3rem;">
+No matter the distance, my heart stays with you always.
+See you very soon, my love.
+</p>
+<button class="primary" onclick="resetToStart()">The End 💌</button>
 </div>
 
 <canvas id="confetti"></canvas>
@@ -179,6 +236,23 @@ Almost There 💖
 
 const correctPassword="01/08/2024";
 const music=document.getElementById("bgMusic");
+let questionInterval;
+
+/* Slide Navigation */
+function switchSection(id){
+let current=document.querySelector(".section.active");
+if(current){
+current.classList.remove("active");
+current.classList.add("exit");
+setTimeout(()=>{current.classList.remove("exit");},800);
+}
+document.getElementById(id).classList.add("active");
+
+if(id==="ask"){startQuestionRain();}
+if(id==="memories"){startMemoriesAnimation();}
+}
+
+function next(id){switchSection(id);}
 
 function checkPass(){
 let input=document.getElementById("passInput").value;
@@ -191,31 +265,17 @@ switchSection("intruder");
 }
 }
 
-function switchSection(id){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-
-if(id==="ask"){
-createQuestions();
-}
-}
-
-function next(id){
-switchSection(id);
-}
-
+/* Music Fade */
 function startMusicFadeIn(){
 music.volume=0;
 music.play();
 let fade=setInterval(()=>{
-if(music.volume<0.9){
-music.volume+=0.02;
-}else{
-clearInterval(fade);
-}
+if(music.volume<0.9){music.volume+=0.02;}
+else{clearInterval(fade);}
 },200);
 }
 
+/* Typewriter */
 let text="Every moment with you feels different... and better ❤️";
 let i=0;
 function typeWriter(){
@@ -226,74 +286,87 @@ setTimeout(typeWriter,50);
 }
 }
 
-function createQuestions(){
+/* Continuous Question Rain */
+function startQuestionRain(){
 const container=document.getElementById("questionContainer");
 container.innerHTML="";
-for(let i=0;i<30;i++){
+clearInterval(questionInterval);
+
+questionInterval=setInterval(()=>{
 let q=document.createElement("div");
 q.className="question";
 q.innerText="?";
 q.style.left=Math.random()*100+"vw";
 q.style.animationDuration=(3+Math.random()*3)+"s";
 container.appendChild(q);
-}
+setTimeout(()=>{q.remove();},5000);
+},300);
 }
 
-const noBtn=document.getElementById("noBtn");
-noBtn.addEventListener("mouseover",()=>{
-noBtn.style.top=Math.random()*70+"%";
-noBtn.style.left=Math.random()*70+"%";
+document.getElementById("noBtn").addEventListener("mouseover",function(){
+this.style.top=Math.random()*70+"%";
+this.style.left=Math.random()*70+"%";
 });
 
 function sayYes(){
+clearInterval(questionInterval);
 launchConfetti();
 switchSection("memories");
 }
 
+/* Sequential Images */
+function startMemoriesAnimation(){
+setTimeout(()=>{pic1.classList.add("show");},1000);
+setTimeout(()=>{pic2.classList.add("show");},3000);
+setTimeout(()=>{pic3.classList.add("show");},5000);
+setTimeout(()=>{continueMemories.classList.add("showBtn");},15000);
+}
+
+/* Countdown */
 const targetDate=new Date("June 6, 2026 00:00:00").getTime();
 setInterval(()=>{
 const now=new Date().getTime();
 const diff=targetDate-now;
 
-const days=Math.floor(diff/(1000*60*60*24));
-const hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+const d=Math.floor(diff/(1000*60*60*24));
+const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+const m=Math.floor((diff%(1000*60*60))/(1000*60));
+const s=Math.floor((diff%(1000*60))/1000);
 
-if(document.getElementById("finalTimer")){
-document.getElementById("finalTimer").innerHTML=
-days+" Days "+hours+" Hours ❤️";
+if(finalTimer){
+finalTimer.innerHTML=`${d} Days ${h} Hours ${m} Minutes ${s} Seconds ❤️`;
 }
 },1000);
 
+/* Confetti */
 function launchConfetti(){
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
-
-let pieces=[];
 for(let i=0;i<150;i++){
-pieces.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-size:5+Math.random()*5,
-speed:2+Math.random()*3,
-color:`hsl(${Math.random()*360},100%,50%)`
-});
+ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+ctx.fillRect(Math.random()*canvas.width,
+Math.random()*canvas.height,5,5);
 }
-
-function draw(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-pieces.forEach(p=>{
-ctx.fillStyle=p.color;
-ctx.fillRect(p.x,p.y,p.size,p.size);
-p.y+=p.speed;
-if(p.y>canvas.height)p.y=0;
-});
-requestAnimationFrame(draw);
-}
-draw();
-
 setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),3000);
+}
+
+/* Reset */
+function resetToStart(){
+music.pause();
+music.currentTime=0;
+passInput.value="";
+switchSection("password");
+}
+
+/* Background Particles */
+for(let i=0;i<50;i++){
+let p=document.createElement("div");
+p.className="particle";
+p.style.left=Math.random()*100+"vw";
+p.style.animationDuration=(5+Math.random()*5)+"s";
+document.body.appendChild(p);
 }
 
 </script>
