@@ -9,7 +9,6 @@
 body{
 margin:0;
 font-family:Segoe UI, sans-serif;
-background:#0f0c29;
 background:linear-gradient(to right,#0f0c29,#302b63,#24243e);
 color:white;
 text-align:center;
@@ -23,11 +22,17 @@ padding:40px;
 justify-content:center;
 align-items:center;
 flex-direction:column;
+position:relative;
 }
 
 .active{
 display:flex;
 animation:fade 1s ease;
+}
+
+@keyframes fade{
+from{opacity:0;}
+to{opacity:1;}
 }
 
 input{
@@ -44,6 +49,7 @@ border-radius:25px;
 margin:10px;
 cursor:pointer;
 transition:0.3s;
+font-weight:bold;
 }
 
 .primary{
@@ -54,63 +60,50 @@ color:white;
 .secondary{
 background:white;
 color:black;
+position:absolute;
 }
 
 button:hover{
 transform:scale(1.1);
 }
 
-#noBtn{
-position:absolute;
-}
-
-@keyframes fade{
-from{opacity:0;}
-to{opacity:1;}
-}
-
+/* Floating Hearts */
 .heart{
 position:absolute;
-width:15px;
-height:15px;
-background:red;
+width:12px;
+height:12px;
+background:#ff4b91;
 transform:rotate(45deg);
-animation:float 8s infinite linear;
-opacity:0.6;
+animation:float 10s linear infinite;
+opacity:0.4;
 }
 
 .heart:before,.heart:after{
 content:'';
 position:absolute;
-width:15px;
-height:15px;
-background:red;
+width:12px;
+height:12px;
+background:#ff4b91;
 border-radius:50%;
 }
 
-.heart:before{top:-7px;left:0;}
-.heart:after{left:-7px;top:0;}
+.heart:before{top:-6px;}
+.heart:after{left:-6px;}
 
 @keyframes float{
 from{transform:translateY(100vh) rotate(45deg);}
 to{transform:translateY(-10vh) rotate(45deg);}
 }
 
+/* Gift */
 #giftBox{
-width:120px;
-height:120px;
-background:#ff4b91;
-margin:20px auto;
+font-size:80px;
 cursor:pointer;
-position:relative;
+transition:0.4s;
 }
 
-#giftBox:before{
-content:'🎁';
-font-size:70px;
-position:absolute;
-top:15px;
-left:25px;
+#giftBox:hover{
+transform:scale(1.2);
 }
 
 #giftMessage{
@@ -119,6 +112,7 @@ margin-top:20px;
 font-size:1.3rem;
 }
 
+/* Confetti */
 canvas{
 position:fixed;
 top:0;
@@ -130,24 +124,38 @@ pointer-events:none;
 
 <body>
 
-<audio id="bgMusic" loop>
+<!-- 🔊 MUSIC SECTION -->
+<audio id="bgMusic" loop preload="auto">
 <source src="music.mp3" type="audio/mp3">
 </audio>
+<!-- 🔊 END MUSIC SECTION -->
 
-<!-- PASSWORD -->
+
+<!-- PASSWORD SCREEN -->
 <div id="password" class="section active">
 <h2>Hint: When is our Avantiversary?</h2>
-<input type="password" id="passInput" placeholder="Enter date">
+<input type="password" id="passInput" placeholder="DD/MM/YYYY">
 <br>
 <button class="primary" onclick="checkPass()">Enter</button>
-<p id="error" style="color:red;"></p>
 </div>
+
+
+<!-- 🚨 INTRUDER SECTION -->
+<div id="intruder" class="section" style="background:black;">
+<h1 style="color:red;font-size:2rem;">
+YOU ARE NOT MY AVANTI ! BACK OFF !!!!
+</h1>
+<img src="intruder.jpg" style="max-width:90%;margin-top:20px;border-radius:10px;">
+</div>
+<!-- 🚨 END INTRUDER SECTION -->
+
 
 <!-- INTRO -->
 <div id="intro" class="section">
 <h1 id="typeText"></h1>
 <button class="primary" onclick="next('countdown')">Continue</button>
 </div>
+
 
 <!-- COUNTDOWN -->
 <div id="countdown" class="section">
@@ -156,6 +164,7 @@ pointer-events:none;
 <button class="primary" onclick="next('ask')">Continue</button>
 </div>
 
+
 <!-- ASK -->
 <div id="ask" class="section">
 <h1>Will you let me spoil you this Valentine’s? ❤️</h1>
@@ -163,10 +172,11 @@ pointer-events:none;
 <button id="noBtn" class="secondary">NO 😏</button>
 </div>
 
+
 <!-- GIFT -->
 <div id="gift" class="section">
 <h1>One More Thing...</h1>
-<div id="giftBox" onclick="openGift()"></div>
+<div id="giftBox" onclick="openGift()">🎁</div>
 <div id="giftMessage">
 Your real gift is waiting for you on 6th June 2026 ❤️
 </div>
@@ -175,26 +185,46 @@ Your real gift is waiting for you on 6th June 2026 ❤️
 <canvas id="confetti"></canvas>
 
 <script>
+
 const correctPassword="01/08/2024";
+const music=document.getElementById("bgMusic");
 
 function checkPass(){
 let input=document.getElementById("passInput").value;
+
 if(input===correctPassword){
-document.getElementById("password").classList.remove("active");
-document.getElementById("intro").classList.add("active");
-document.getElementById("bgMusic").play();
+switchSection("intro");
+startMusicFadeIn();   // 🔊 MUSIC STARTS HERE
 typeWriter();
 createHearts();
 }else{
-document.getElementById("error").innerText="Wrong date.";
+switchSection("intruder");  // 🚨 INTRUDER SCREEN TRIGGERS HERE
 }
 }
 
-function next(id){
+function switchSection(id){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
+function next(id){
+switchSection(id);
+}
+
+/* 🔊 Smooth Music Fade In */
+function startMusicFadeIn(){
+music.volume=0;
+music.play();
+let fade=setInterval(()=>{
+if(music.volume<0.9){
+music.volume+=0.02;
+}else{
+clearInterval(fade);
+}
+},200);
+}
+
+/* Typewriter */
 let text="Every moment with you feels different... and better ❤️";
 let i=0;
 function typeWriter(){
@@ -205,50 +235,77 @@ setTimeout(typeWriter,50);
 }
 }
 
+/* Floating Hearts */
 function createHearts(){
 for(let i=0;i<20;i++){
 let heart=document.createElement("div");
 heart.className="heart";
 heart.style.left=Math.random()*100+"vw";
-heart.style.animationDuration=(5+Math.random()*5)+"s";
+heart.style.animationDuration=(6+Math.random()*6)+"s";
 document.body.appendChild(heart);
 }
 }
 
+/* Countdown */
 const targetDate=new Date("June 6, 2026 00:00:00").getTime();
-setInterval(function(){
+setInterval(()=>{
 const now=new Date().getTime();
 const diff=targetDate-now;
 const days=Math.floor(diff/(1000*60*60*24));
 document.getElementById("timer").innerHTML=days+" Days Left ❤️";
 },1000);
 
+/* Runaway NO Button */
 const noBtn=document.getElementById("noBtn");
 noBtn.addEventListener("mouseover",()=>{
-noBtn.style.top=Math.random()*80+"%";
-noBtn.style.left=Math.random()*80+"%";
+noBtn.style.top=Math.random()*70+"%";
+noBtn.style.left=Math.random()*70+"%";
 });
 
+/* YES */
 function sayYes(){
 launchConfetti();
-next("gift");
+switchSection("gift");
 }
 
+/* Gift */
 function openGift(){
 document.getElementById("giftMessage").style.display="block";
 }
 
+/* Confetti */
 function launchConfetti(){
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
-for(let i=0;i<200;i++){
-ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
-ctx.fillRect(Math.random()*canvas.width,Math.random()*canvas.height,5,5);
+
+let pieces=[];
+for(let i=0;i<150;i++){
+pieces.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:5+Math.random()*5,
+speed:2+Math.random()*3,
+color:`hsl(${Math.random()*360},100%,50%)`
+});
 }
-setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),2000);
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+pieces.forEach(p=>{
+ctx.fillStyle=p.color;
+ctx.fillRect(p.x,p.y,p.size,p.size);
+p.y+=p.speed;
+if(p.y>canvas.height)p.y=0;
+});
+requestAnimationFrame(draw);
 }
+draw();
+
+setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),3000);
+}
+
 </script>
 
 </body>
