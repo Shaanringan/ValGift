@@ -75,12 +75,12 @@ transform:scale(1.1);
 /* YES pulse */
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.08);}
+50%{transform:scale(1.1);}
 100%{transform:scale(1);}
 }
 
 .pulse{
-animation:pulse 2s infinite;
+animation:pulse 1.5s infinite;
 }
 
 /* Question rain */
@@ -98,13 +98,13 @@ opacity:0.5;
 100%{transform:translateY(110vh);}
 }
 
-/* Valentine zoom */
+/* Zoom animation */
 @keyframes zoomIn{
 0%{transform:scale(0.6); opacity:0;}
 100%{transform:scale(1); opacity:1;}
 }
 
-#valText{
+.zoom{
 animation:zoomIn 1.5s ease;
 }
 
@@ -120,6 +120,20 @@ opacity:1;
 transform:translateY(0);
 }
 
+/* Fade overlay */
+#fadeOverlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+opacity:0;
+pointer-events:none;
+transition:opacity 2s ease;
+z-index:999;
+}
+
 canvas{
 position:fixed;
 top:0;
@@ -130,6 +144,8 @@ pointer-events:none;
 </head>
 
 <body>
+
+<div id="fadeOverlay"></div>
 
 <audio id="bgMusic" loop preload="auto">
 <source src="Music.mp3" type="audio/mp3">
@@ -159,7 +175,7 @@ pointer-events:none;
 <div id="ask" class="section">
 <div id="questionContainer"></div>
 
-<img id="capy" src="capy.jpg" style="max-width:250px; border-radius:15px; margin-bottom:20px;">
+<img src="capy.jpg" style="max-width:250px; border-radius:15px; margin-bottom:20px;">
 
 <h1>Will you be my Valentine? ❤️</h1>
 
@@ -189,7 +205,7 @@ Continue 💌
 
 <!-- VALENTINE -->
 <div id="valentineWish" class="section">
-<h1 id="valText" style="font-size:3.5rem;">
+<h1 class="zoom" style="font-size:3.5rem;">
 Happy Valentine's Day Avan ❤️
 </h1>
 
@@ -204,7 +220,7 @@ Continue ❤️
 
 <!-- COUNTDOWN -->
 <div id="countdown" class="section">
-<h1>Countdown to our Next Meeting & Your Birthday !!!</h1>
+<h1 class="zoom">Countdown to our Next Meeting & Your Birthday !!!</h1>
 <h2 id="finalTimer"></h2>
 <button class="primary" onclick="next('ending')">
 Almost There 💖
@@ -213,13 +229,12 @@ Almost There 💖
 
 <!-- END -->
 <div id="ending" class="section">
-<h1>I Love You Avan ❤️</h1>
+<h1 class="zoom">Forever Yours ❤️</h1>
 <p style="font-size:1.3rem;">
-No matter the distance, my heart is always with you.
-See you very soon, my love.
+No matter the distance, my heart stays with you always.
 </p>
-<button class="primary" onclick="resetToStart()">
-The End 💌
+<button class="primary" onclick="finalFade()">
+Until We Meet Again 💫
 </button>
 </div>
 
@@ -279,7 +294,6 @@ function startQuestionRain(){
 const container=document.getElementById("questionContainer");
 container.innerHTML="";
 clearInterval(questionInterval);
-
 questionInterval=setInterval(()=>{
 let q=document.createElement("div");
 q.className="question";
@@ -295,16 +309,15 @@ this.style.top=Math.random()*70+"%";
 this.style.left=Math.random()*70+"%";
 });
 
-/* YES */
+/* Massive celebration */
 function sayYes(){
 clearInterval(questionInterval);
 document.getElementById("questionContainer").innerHTML="";
-launchFireworks();
+launchCelebration();
 setTimeout(()=>{switchSection("memories");},5000);
 }
 
-/* Fireworks */
-function launchFireworks(){
+function launchCelebration(){
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
@@ -313,14 +326,14 @@ canvas.height=window.innerHeight;
 let particles=[];
 let animation;
 
-function createExplosion(x,y){
-for(let i=0;i<40;i++){
+function explosion(){
+for(let i=0;i<120;i++){
 particles.push({
-x:x,
-y:y,
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
 angle:Math.random()*2*Math.PI,
-speed:2+Math.random()*4,
-radius:2+Math.random()*3,
+speed:2+Math.random()*6,
+radius:2+Math.random()*4,
 alpha:1,
 color:`hsl(${Math.random()*360},100%,50%)`
 });
@@ -333,8 +346,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 particles.forEach(p=>{
 p.x+=Math.cos(p.angle)*p.speed;
 p.y+=Math.sin(p.angle)*p.speed;
-p.alpha-=0.02;
-
+p.alpha-=0.015;
 ctx.globalAlpha=p.alpha;
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.radius,0,2*Math.PI);
@@ -343,14 +355,10 @@ ctx.fill();
 });
 
 particles=particles.filter(p=>p.alpha>0);
-
 animation=requestAnimationFrame(animate);
 }
 
-setInterval(()=>{
-createExplosion(Math.random()*canvas.width,Math.random()*canvas.height);
-},400);
-
+setInterval(explosion,500);
 animate();
 
 setTimeout(()=>{
@@ -360,11 +368,11 @@ ctx.globalAlpha=1;
 },5000);
 }
 
-/* Memory images */
+/* Images every 2.5 sec */
 function showMemories(){
-setTimeout(()=>document.getElementById("m1").classList.add("showMemory"),5000);
-setTimeout(()=>document.getElementById("m2").classList.add("showMemory"),10000);
-setTimeout(()=>document.getElementById("m3").classList.add("showMemory"),15000);
+setTimeout(()=>document.getElementById("m1").classList.add("showMemory"),2500);
+setTimeout(()=>document.getElementById("m2").classList.add("showMemory"),5000);
+setTimeout(()=>document.getElementById("m3").classList.add("showMemory"),7500);
 }
 
 /* Countdown */
@@ -385,11 +393,19 @@ days+" Days "+hours+" Hours "+minutes+" Minutes "+seconds+" Seconds ❤️";
 }
 },1000);
 
-function resetToStart(){
+/* Final cinematic fade */
+function finalFade(){
+const overlay=document.getElementById("fadeOverlay");
+overlay.style.opacity=1;
+
+let fadeOut=setInterval(()=>{
+if(music.volume>0.05){
+music.volume-=0.05;
+}else{
 music.pause();
-music.currentTime=0;
-document.getElementById("passInput").value="";
-switchSection("password");
+clearInterval(fadeOut);
+}
+},200);
 }
 
 </script>
