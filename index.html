@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For Avanti ❤️</title>
+<title>For Avan ❤️</title>
 
 <style>
 body{
@@ -67,49 +67,18 @@ button:hover{
 transform:scale(1.1);
 }
 
-/* Floating Hearts */
-.heart{
+/* Falling Question Marks */
+.question{
 position:absolute;
-width:12px;
-height:12px;
-background:#ff4b91;
-transform:rotate(45deg);
-animation:float 10s linear infinite;
-opacity:0.4;
+top:-50px;
+font-size:28px;
+color:#ff4b91;
+animation:fall linear forwards;
+opacity:0.5;
 }
 
-.heart:before,.heart:after{
-content:'';
-position:absolute;
-width:12px;
-height:12px;
-background:#ff4b91;
-border-radius:50%;
-}
-
-.heart:before{top:-6px;}
-.heart:after{left:-6px;}
-
-@keyframes float{
-from{transform:translateY(100vh) rotate(45deg);}
-to{transform:translateY(-10vh) rotate(45deg);}
-}
-
-/* Gift */
-#giftBox{
-font-size:80px;
-cursor:pointer;
-transition:0.4s;
-}
-
-#giftBox:hover{
-transform:scale(1.2);
-}
-
-#giftMessage{
-display:none;
-margin-top:20px;
-font-size:1.3rem;
+@keyframes fall{
+to{transform:translateY(110vh);}
 }
 
 /* Confetti */
@@ -124,62 +93,84 @@ pointer-events:none;
 
 <body>
 
-<!-- 🔊 MUSIC SECTION -->
+<!-- 🔊 MUSIC -->
 <audio id="bgMusic" loop preload="auto">
-<source src="music.mp3" type="audio/mp3">
+<source src="Music.mp3" type="audio/mp3">
 </audio>
-<!-- 🔊 END MUSIC SECTION -->
 
-
-<!-- PASSWORD SCREEN -->
-<div id="password" class="section active">
+<!-- PASSWORD -->
+<div id="password" class="section active"> 
 <h2>Hint: When is our Avantiversary?</h2>
-<input type="password" id="passInput" placeholder="DD/MM/YYYY">
+<input type="password" id="passInput" placeholder="DD/MM/YYYY (include '/')">
 <br>
 <button class="primary" onclick="checkPass()">Enter</button>
 </div>
 
-
-<!-- 🚨 INTRUDER SECTION -->
+<!-- 🚨 INTRUDER -->
 <div id="intruder" class="section" style="background:black;">
-<h1 style="color:red;font-size:2rem;">
-YOU ARE NOT MY AVANTI ! BACK OFF !!!!
-</h1>
-<img src="intruder.jpg" style="max-width:90%;margin-top:20px;border-radius:10px;">
+<h1 style="color:red;">YOU ARE NOT MY AVANTI ! BACK OFF !!!!</h1>
+<img src="Intruder.jpg" style="max-width:90%; margin-top:20px; border-radius:10px;">
 </div>
-<!-- 🚨 END INTRUDER SECTION -->
-
 
 <!-- INTRO -->
 <div id="intro" class="section">
 <h1 id="typeText"></h1>
-<button class="primary" onclick="next('countdown')">Continue</button>
-</div>
-
-
-<!-- COUNTDOWN -->
-<div id="countdown" class="section">
-<h1>Countdown to Avanti's Birthday 🎂</h1>
-<h2 id="timer"></h2>
 <button class="primary" onclick="next('ask')">Continue</button>
 </div>
 
-
 <!-- ASK -->
 <div id="ask" class="section">
-<h1>Will you let me spoil you this Valentine’s? ❤️</h1>
+<div id="questionContainer"></div>
+
+<img src="capy.jpg" style="max-width:250px; border-radius:15px; margin-bottom:20px;">
+
+<h1>Will you be my Valentine? ❤️</h1>
+
 <button class="primary" onclick="sayYes()">YES 💖</button>
 <button id="noBtn" class="secondary">NO 😏</button>
 </div>
 
+<!-- MEMORIES -->
+<div id="memories" class="section">
+<h1>Our Moments ❤️</h1>
 
-<!-- GIFT -->
-<div id="gift" class="section">
-<h1>One More Thing...</h1>
-<div id="giftBox" onclick="openGift()">🎁</div>
-<div id="giftMessage">
-Your real gift is waiting for you on 6th June 2026 ❤️
+<div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center;">
+<img src="dummypic1.jpg" style="width:200px; border-radius:12px;">
+<img src="dummypic2.jpg" style="width:200px; border-radius:12px;">
+<img src="dummypic3.jpg" style="width:200px; border-radius:12px;">
 </div>
+
+<p style="max-width:600px; margin-top:20px;">
+This is where your personal message will go.
+Edit this later and write something meaningful.
+</p>
+
+<button class="primary" onclick="next('valentineWish')">
+Continue 💌
+</button>
+</div>
+
+<!-- VALENTINE WISH -->
+<div id="valentineWish" class="section">
+<h1 style="font-size:3rem;">Happy Valentine's Day Avan <3</h1>
+<button class="primary" onclick="next('countdown')">
+Continue ❤️
+</button>
+</div>
+
+<!-- COUNTDOWN -->
+<div id="countdown" class="section">
+<h1>Countdown to 6th June 2026</h1>
+<h2 id="finalTimer"></h2>
+<button class="primary" onclick="next('ending')">
+Almost There 💖
+</button>
+</div>
+
+<!-- END -->
+<div id="ending" class="section">
+<h1>I Love You Avan ❤️</h1>
+<p style="font-size:1.3rem;">See you soon.</p>
 </div>
 
 <canvas id="confetti"></canvas>
@@ -191,27 +182,28 @@ const music=document.getElementById("bgMusic");
 
 function checkPass(){
 let input=document.getElementById("passInput").value;
-
 if(input===correctPassword){
 switchSection("intro");
-startMusicFadeIn();   // 🔊 MUSIC STARTS HERE
+startMusicFadeIn();
 typeWriter();
-createHearts();
 }else{
-switchSection("intruder");  // 🚨 INTRUDER SCREEN TRIGGERS HERE
+switchSection("intruder");
 }
 }
 
 function switchSection(id){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
+
+if(id==="ask"){
+createQuestions();
+}
 }
 
 function next(id){
 switchSection(id);
 }
 
-/* 🔊 Smooth Music Fade In */
 function startMusicFadeIn(){
 music.volume=0;
 music.play();
@@ -224,7 +216,6 @@ clearInterval(fade);
 },200);
 }
 
-/* Typewriter */
 let text="Every moment with you feels different... and better ❤️";
 let i=0;
 function typeWriter(){
@@ -235,45 +226,44 @@ setTimeout(typeWriter,50);
 }
 }
 
-/* Floating Hearts */
-function createHearts(){
-for(let i=0;i<20;i++){
-let heart=document.createElement("div");
-heart.className="heart";
-heart.style.left=Math.random()*100+"vw";
-heart.style.animationDuration=(6+Math.random()*6)+"s";
-document.body.appendChild(heart);
+function createQuestions(){
+const container=document.getElementById("questionContainer");
+container.innerHTML="";
+for(let i=0;i<30;i++){
+let q=document.createElement("div");
+q.className="question";
+q.innerText="?";
+q.style.left=Math.random()*100+"vw";
+q.style.animationDuration=(3+Math.random()*3)+"s";
+container.appendChild(q);
 }
 }
 
-/* Countdown */
-const targetDate=new Date("June 6, 2026 00:00:00").getTime();
-setInterval(()=>{
-const now=new Date().getTime();
-const diff=targetDate-now;
-const days=Math.floor(diff/(1000*60*60*24));
-document.getElementById("timer").innerHTML=days+" Days Left ❤️";
-},1000);
-
-/* Runaway NO Button */
 const noBtn=document.getElementById("noBtn");
 noBtn.addEventListener("mouseover",()=>{
 noBtn.style.top=Math.random()*70+"%";
 noBtn.style.left=Math.random()*70+"%";
 });
 
-/* YES */
 function sayYes(){
 launchConfetti();
-switchSection("gift");
+switchSection("memories");
 }
 
-/* Gift */
-function openGift(){
-document.getElementById("giftMessage").style.display="block";
-}
+const targetDate=new Date("June 6, 2026 00:00:00").getTime();
+setInterval(()=>{
+const now=new Date().getTime();
+const diff=targetDate-now;
 
-/* Confetti */
+const days=Math.floor(diff/(1000*60*60*24));
+const hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+
+if(document.getElementById("finalTimer")){
+document.getElementById("finalTimer").innerHTML=
+days+" Days "+hours+" Hours ❤️";
+}
+},1000);
+
 function launchConfetti(){
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
